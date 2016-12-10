@@ -36,6 +36,12 @@ public class PlayerController extends VectorizedSprite {
 			movement.x += friction * dt;
 		}
 
+		if(movement.y > 0 && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			movement.y -= friction * dt;
+		} else if (movement.y < 0 && !Gdx.input.isKeyPressed(Input.Keys.UP)) {
+			movement.y += friction * dt;
+		}
+
 		if (getX() < 0) {
 			movement.x = 0;
 			setX(0);
