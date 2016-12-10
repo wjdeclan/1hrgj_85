@@ -19,10 +19,10 @@ public class WallBounceSprite extends VectorizedSprite {
 			setMovementVector(new Vector2(-1 * movement.x, movement.y));
 		}
 		if (this.getY() > 576 - this.getHeight()) {
-			this.setPosition(this.getWidth(), 576 - this.getY());
+			this.setPosition(this.getX(), 576 - this.getHeight());
 			setMovementVector(new Vector2(movement.x, -1 * movement.y));
 		} else if (this.getY() < 0) {
-			this.setPosition(this.getWidth(), 0);
+			this.setPosition(this.getX(), 0);
 			setMovementVector(new Vector2(movement.x, -1 * movement.y));
 		}
 	}

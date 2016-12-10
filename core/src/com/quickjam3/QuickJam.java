@@ -43,7 +43,11 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 
 			wbs.setPosition((float) (Math.random() * 768 - wbs.getWidth()),
 					(float) (Math.random() * 576 - wbs.getHeight()));
-			wbs.setMovementVector(new Vector2((float) (Math.random() * 30), (float) (Math.random() * 30)));
+
+			Vector2 movement = new Vector2((float) (Math.random() - 0.5), (float) (Math.random() - 0.5));
+			movement.nor().scl(50);
+
+			wbs.setMovementVector(movement);
 
 			enemies.add(wbs);
 		}
