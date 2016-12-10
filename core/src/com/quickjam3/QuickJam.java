@@ -31,7 +31,7 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 		player.setPosition((768 - player.getWidth()) / 2, (576 - player.getHeight()) / 2);
 
 		populate();
-		
+
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -40,8 +40,12 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 
 		for (int i = 0; i < 50; i++) {
 			WallBounceSprite wbs = new WallBounceSprite(enemyTexture);
+
 			wbs.setPosition((float) (Math.random() * 768 - wbs.getWidth()),
 					(float) (Math.random() * 576 - wbs.getHeight()));
+			wbs.setMovementVector(new Vector2((float) (Math.random() * 30), (float) (Math.random() * 30)));
+
+			enemies.add(wbs);
 		}
 	}
 
