@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class PlayerController extends VectorizedSprite {
 
-	private float gravityAccel = -1500;
+	private float gravityAccel = 0;
 	private float friction = 100;
 
 	public PlayerController(Texture img) {
