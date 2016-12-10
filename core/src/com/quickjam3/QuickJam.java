@@ -6,18 +6,28 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
 public class QuickJam extends ApplicationAdapter implements InputProcessor {
 	SpriteBatch batch;
-	Texture enemyTexture, playerTexture;
+	Texture enemyTexture, playerTexture, bombTexture, explosionTexture;
 
 	PlayerController player;
 
+	Sprite explosion;
+
 	ArrayList<WallBounceSprite> enemies;
+
+	//BitmapFont font = new BitmapFont();
+
+	float timeToExplode;
 
 	@Override
 	public void create() {
@@ -25,14 +35,24 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 
 		enemyTexture = new Texture("enemy.png");
 		playerTexture = new Texture("player.png");
+		bombTexture = new Texture("explode.png");
+
+		explosionTexture = new Texture("explosion.png");
+
+		explosion = new Sprite(explosionTexture);
+		explosion.setSize(128, 128);
 
 		player = new PlayerController(playerTexture);
 
 		player.setPosition((768 - player.getWidth()) / 2, (576 - player.getHeight()) / 2);
 
+		timeToExplode = 5 + (float) (Math.random() * 5);
+
 		populate();
 
 		Gdx.input.setInputProcessor(this);
+
+		//font.setColor(Color.BLACK);
 	}
 
 	public void populate() {
@@ -53,6 +73,15 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 		}
 	}
 
+	public void reset() {
+		player.setPosition((768 - player.getWidth()) / 2, (576 - player.getHeight()) / 2);
+		player.setTexture(playerTexture);
+
+		timeToExplode = 5 + (float) (Math.random() * 5);
+
+		populate();
+	}
+
 	@Override
 	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -60,11 +89,31 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 
 		float dt = Gdx.graphics.getDeltaTime();
 
-		for (WallBounceSprite enemy : enemies) {
-			enemy.update(dt);
+		timeToExplode -= dt;
+
+		if ((timeToExplode < 3 && timeToExplode > 2.75) || (timeToExplode < 2 && timeToExplode > 1.75)
+				|| (timeToExplode < 1.5 && timeToExplode > 1.25) || (timeToExplode < 1)) {
+			player.setTexture(bombTexture);
+		} else if ((timeToExplode < 2.75 && timeToExplode > 2) || (timeToExplode < 1.75 && timeToExplode > 1.5)
+				|| (timeToExplode < 1.25 && timeToExplode > 1)) {
+			player.setTexture(playerTexture);
 		}
 
-		player.update(dt);
+		if (timeToExplode > 0) {
+			for (WallBounceSprite enemy : enemies) {
+				enemy.update(dt);
+			}
+
+			player.update(dt);
+		} else {
+			Circle explosion = new Circle(player.getX() + player.getWidth() / 2, player.getY() + player.getHeight() / 2,
+					64);
+		}
+
+		if (timeToExplode < 0) {
+			explosion.setPosition(player.getX() + player.getWidth() / 2 - 64,
+					player.getY() + player.getHeight() / 2 - 64);
+		}
 
 		batch.begin();
 
@@ -73,6 +122,13 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 		}
 
 		player.draw(batch);
+
+		
+		if (timeToExplode < 0) {
+			explosion.draw(batch);
+			
+			//font.draw(batch, "You killed " + numDead, 0, 0);
+		}
 
 		batch.end();
 	}
@@ -95,6 +151,8 @@ public class QuickJam extends ApplicationAdapter implements InputProcessor {
 			player.getMovement().set(new Vector2(player.movement.x, 100));
 		} else if (keycode == Input.Keys.DOWN) {
 			player.getMovement().set(new Vector2(player.movement.x, -100));
+		} else if (keycode == Input.Keys.SPACE) {
+			reset();
 		}
 		return false;
 	}
